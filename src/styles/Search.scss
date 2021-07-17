@@ -1,0 +1,13 @@
+.search {
+  display: flex;
+  flex-flow: row nowrap;
+  border-bottom: 1px solid lightslategray;
+  padding: 2rem 10rem;
+
+  input {
+    margin-left: 1rem;
+    width: 200px;
+    outline: none;
+  }
+}
+

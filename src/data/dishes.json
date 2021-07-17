@@ -1,0 +1,44 @@
+[
+  {
+    "id": 0,
+    "name": "Scrambled eggs",
+    "ingredients": [0, 0],
+    "kcal": 140
+  },
+  {
+    "id": 1,
+    "name": "Soft-boiled egg",
+    "ingredients": [0],
+    "kcal": 70
+  },
+  {
+    "id": 2,
+    "name": "Slice of Lembas Bread",
+    "ingredients": [1],
+    "kcal": 60
+  },
+  {
+    "id": 3,
+    "name": "Po-Tay-To Onion Soup",
+    "ingredients": [1, 2, 3],
+    "kcal": 300
+  },
+  {
+    "id": 4,
+    "name": "Balin's Spiced Beef",
+    "ingredients": [2, 4, 5],
+    "kcal": 430
+  },
+  {
+    "id": 5,
+    "name": "Mrs. Cotton's Berry Pie",
+    "ingredients": [0, 0, 6, 7],
+    "kcal": 250
+  },
+  {
+    "id": 6,
+    "name": "Frogmorton Flapjack",
+    "ingredients": [0, 0, 7, 8, 9],
+    "kcal": 500
+  }
+]

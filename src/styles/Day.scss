@@ -1,0 +1,17 @@
+.day {
+  align-items: center;
+  display: flex;
+  flex-flow: row nowrap;
+
+  h2 {
+    margin-right: 1rem;
+    font-weight: 300;
+  }
+
+  p {
+    border: 1px solid lightslategray;
+    padding: 1rem;
+    width: 500px;
+    height: auto;
+  }
+}

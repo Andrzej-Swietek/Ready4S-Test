@@ -1,0 +1,37 @@
+.themeToggler {
+  position: fixed;
+  bottom: 10%;
+  right: 5%;
+  backdrop-filter: blur(25px);
+  //padding: 2rem;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 2rem;
+  width: 10vh;
+  height: 10vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(0,0,0,.3);
+  color: #fff;
+
+  i {
+    transition: .5s;
+  }
+  &:hover{
+    i {
+      transform: rotateY(360deg);
+      transform: rotateZ(360deg);
+      transform: rotateX(360deg);
+    }
+  }
+}
+
+.dark {
+  background-color: rgba(255,255,255,.3);
+}
+
+.light {
+  background-color: rgba(#282c36,1);
+}
+
