@@ -24,7 +24,7 @@ const getSecondDay = ( P, W ,Day1 ,Day1weight , kcal, names) => {
     let maxScore = 0;
     let tmp;
 
-    // For each name of product we remove items of this kind so that there is one less than in day 1 schedule and check if it gives better result
+    // For each name of product we remove items of this kind so that there is one less than in day 1 eating schedule and check if it gives better result
     day1Names.forEach( name => {
 
         let changedCounter = 1;
@@ -60,20 +60,11 @@ const getSecondDay = ( P, W ,Day1 ,Day1weight , kcal, names) => {
         let index = day2Names.findIndex( n => n.name === tmp[item] )
         day2Names[ index ].amount+=1;
     })
-    // console.log(day2Names)
 
     return { day1: day1Names, day2: day2Names }
 
 }
 
-// const getNamesAndAmount = (arr, names) => {
-//     let res =[]
-//     arr.forEach( (item,i) => {
-//         if (  res.filter( el => el.name === names[arr[i]] ).length === 0 ) res.push( { name: names[arr[i]], amount: 0 } )
-//         let index = res.findIndex( n => n.name === names[item] )
-//         res[ index ].amount+=1;
-//     })
-// }
 
 
 export default getSecondDay;
