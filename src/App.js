@@ -2,7 +2,6 @@ import './styles/App.scss';
 import { useState } from "react";
 
 // MODULES
-// eslint-disable-next-line
 import knapsack from "./modules/knapsack";
 import sortByKey from "./modules/sortBy";
 
@@ -14,8 +13,9 @@ import ingredients from './data/ingredients.json'
 import Search from "./components/Search";
 import Day from './components/Day'
 import Theme from "./components/Theme";
+import Header from "./components/Header";
 
-import img from './img.png'
+// import img from './img.png'
 
 
 function App() {
@@ -28,18 +28,11 @@ function App() {
   const prepareFoodForUnexpectedJourney = ( numberOfDays ) => {
       if (numberOfDays) {
           try {
-              const mealsWeights = [];
-              const ratio = []
+              const mealsWeights = meals.map( meal => meal.ingredients.reduce( (acc, current) => acc + ingredients[current].weight, 0 ) )
+              const ratio = meals.map( (meal,i) => meal.kcal/mealsWeights[i] )
 
-              meals.forEach(meal => {
-                  let sum = meal.ingredients.reduce( (acc, current) => acc + ingredients[current].weight, 0 )
-                  mealsWeights.push(sum)
-              })
-
-              meals.forEach( (meal, i) =>  ratio.push(meal.kcal/mealsWeights[i]) )
               meals.forEach( (meal,i) => meal["weight"] = mealsWeights[i])
               meals.forEach( (meal,i) => meal["ratio"] = ratio[i])
-
 
               // SORTING BY PRIMARY KEY: RATIO AND SECONDARY KEY: WEIGHT
               const r = sortByKey(meals, "ratio", true);
@@ -60,11 +53,13 @@ function App() {
                   }
               }
 
-              // let maxW_Dwarf = (  Math.floor( (2900 - r[r.findIndex( i=> i.name === "Balin's Spiced Beef" )].kcal - 1)/r[0].kcal ) + 1 ) * r[0].kcal;
+              // BASED ON GIVEN CONSTANTS
               let maxW_Dwarf = 2900 - r[r.findIndex( i=> i.name === "Balin's Spiced Beef" )].kcal;
-              console.log(maxW_Dwarf)
-              const howManyTimesShouldDwarfEatThis = r.map( meal=> Math.floor( ( maxW_Dwarf-1) / meal.kcal  ) +1 );
+              let maxW_Hobbit = 2700 - r[r.findIndex( i=> i.name === "Soft-boiled egg" )].kcal - r[r.findIndex( i=> i.name === "Mrs. Cotton's Berry Pie" )].kcal;
+              let maxW_Wizard = 3100 - r[r.findIndex( i=> i.name === "Scrambled eggs" )].kcal;
+              console.log(`%c || maxW_Dwarf: ${ maxW_Dwarf } | maxW_Hobbit: ${ maxW_Hobbit } | maxW_Wizard ${ maxW_Wizard } ||`, 'color: purple')
 
+              const howManyTimesShouldDwarfEatThis = r.map( meal=> Math.floor( ( maxW_Dwarf-1) / meal.kcal  ) +1 );
 
               const kcal = Array( howManyTimesShouldDwarfEatThis.reduce( (acc,i)=> acc + i ) ).fill(0)
               const weight = Array( howManyTimesShouldDwarfEatThis.reduce( (acc,i)=> acc + i ) ).fill(0)
@@ -79,28 +74,27 @@ function App() {
                       howManyTimesShouldDwarfEatThis[t] += howManyTimesShouldDwarfEatThis[t-1]
                   }
               }
-              console.log(kcal, weight)
               const total = kcal.reduce( (acc,i) => acc+i  )
               let totalCost = weight.reduce( (acc, i)=> acc+i )
 
               // ===========================< DEBUG >============================
               console.log(r)
-              console.log(howManyTimesShouldDwarfEatThis)
-              console.log(kcal, weight)
-              console.log(total, maxW_Dwarf)
-              console.log("totalCost", totalCost)
+              // console.log(howManyTimesShouldDwarfEatThis)
+              // console.log(kcal, weight)
+              // console.log(total, maxW_Dwarf)
+              // console.log("totalCost", totalCost)
               // ===========================</ DEBUG >===========================
 
-             const res = knapsack(kcal,weight,total-maxW_Dwarf)
+             const res = knapsack(kcal, weight,total-maxW_Dwarf)
               console.log( "knapsack", res )
-              totalCost -= res;
+              totalCost -= res.value;
               console.log(totalCost)
+
 
               // Setting Values
               let tmp = Array(numberOfDays).fill(0)
               // console.log(tmp)
               setFoodList([...tmp])
-              console.log( numberOfDays )
 
           } catch (e) {
               console.log(e)
@@ -110,6 +104,7 @@ function App() {
   return (
     <div className="App">
         {/*<img src={img} alt="img"/>*/}
+        <Header />
         <Search onChange={ prepareFoodForUnexpectedJourney } />
         <div className='days'>
             {   foodList.length > 0 &&
