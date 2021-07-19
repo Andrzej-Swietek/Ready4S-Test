@@ -5,7 +5,6 @@ import { useState } from "react";
 import knapsack from "./modules/knapsack";
 import sortByKey from "./modules/sortBy";
 
-
 // DATA
 import meals from './data/dishes.json'
 import ingredients from './data/ingredients.json'
@@ -22,6 +21,38 @@ import getSecondDay from "./modules/getSecondDay";
 
 function App() {
   const [foodList, setFoodList] = useState([])
+
+
+    const getFoodSchedule = (maxW, r) => {
+        const howManyTimesShouldOneEatThis = r.map( meal=> Math.floor( ( maxW-1) / meal.kcal  ) +1 );
+
+        const kcal = Array( howManyTimesShouldOneEatThis.reduce( (acc,i)=> acc + i ) ).fill(0)
+        const weight = Array( howManyTimesShouldOneEatThis.reduce( (acc,i)=> acc + i ) ).fill(0)
+        const names = Array( weight.length ).fill('')
+
+        let t = 0;
+        for ( let i =0; i < kcal.length; i++ ) {
+            kcal[i] = r[t].kcal
+            weight[i] = r[t].weight
+            names[i] = r[t].name
+            if ( i === howManyTimesShouldOneEatThis[t] -1  && t+1 < r.length) {
+                t++;
+                howManyTimesShouldOneEatThis[t] += howManyTimesShouldOneEatThis[t-1]
+            }
+        }
+
+        const total = kcal.reduce( (acc,i) => acc+i  )
+        let totalCost = weight.reduce( (acc, i)=> acc+i )
+
+        const res = knapsack(kcal, weight,total-maxW)
+        totalCost -= res.value;
+
+        let complete_food_schedule = getSecondDay( weight, kcal , res.arr, res.value, maxW, names )
+        // console.log(complete_food_schedule)
+
+        return complete_food_schedule;
+    }
+
 
     /**
      *
@@ -61,40 +92,13 @@ function App() {
               let maxW_Wizard = 3100 - r[r.findIndex( i=> i.name === "Scrambled eggs" )].kcal;
               console.log(`%c || maxW_Dwarf: ${ maxW_Dwarf } | maxW_Hobbit: ${ maxW_Hobbit } | maxW_Wizard ${ maxW_Wizard } ||`, 'color: purple')
 
-              const howManyTimesShouldDwarfEatThis = r.map( meal=> Math.floor( ( maxW_Dwarf-1) / meal.kcal  ) +1 );
+              const dwarfCompleteFoodList = getFoodSchedule(maxW_Dwarf, r)
+              const hobbitCompleteFoodList = getFoodSchedule(maxW_Hobbit, r)
+              const wizardCompleteFoodList = getFoodSchedule(maxW_Wizard, r)
 
-              const kcal = Array( howManyTimesShouldDwarfEatThis.reduce( (acc,i)=> acc + i ) ).fill(0)
-              const weight = Array( howManyTimesShouldDwarfEatThis.reduce( (acc,i)=> acc + i ) ).fill(0)
-              const names = Array( weight.length ).fill('')
-
-              let t = 0;
-              for ( let i =0; i < kcal.length; i++ ) {
-                  kcal[i] = r[t].kcal
-                  weight[i] = r[t].weight
-                  names[i] = r[t].name
-                  if ( i === howManyTimesShouldDwarfEatThis[t] -1  && t+1 < r.length) {
-                      t++;
-                      howManyTimesShouldDwarfEatThis[t] += howManyTimesShouldDwarfEatThis[t-1]
-                  }
-              }
-
-              const total = kcal.reduce( (acc,i) => acc+i  )
-              let totalCost = weight.reduce( (acc, i)=> acc+i )
-
-              // ===========================< DEBUG >============================
-              console.log(r)
-              console.log(howManyTimesShouldDwarfEatThis)
-              // console.log(kcal, weight)
-              // console.log(total, maxW_Dwarf)
-              // console.log("totalCost", totalCost)
-              // ===========================</ DEBUG >===========================
-
-             const res = knapsack(kcal, weight,total-maxW_Dwarf)
-              console.log( "knapsack", res )
-              totalCost -= res.value;
-              console.log(totalCost)
-
-              getSecondDay( weight, kcal , res.arr, res.value, maxW_Dwarf, names )
+              console.log( dwarfCompleteFoodList )
+              console.log( hobbitCompleteFoodList )
+              console.log( wizardCompleteFoodList )
 
               // Setting Values
               let tmp = Array(numberOfDays).fill(0)
