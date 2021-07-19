@@ -5,6 +5,7 @@ import { useState } from "react";
 import knapsack from "./modules/knapsack";
 import sortByKey from "./modules/sortBy";
 
+
 // DATA
 import meals from './data/dishes.json'
 import ingredients from './data/ingredients.json'
@@ -14,6 +15,7 @@ import Search from "./components/Search";
 import Day from './components/Day'
 import Theme from "./components/Theme";
 import Header from "./components/Header";
+import getSecondDay from "./modules/getSecondDay";
 
 // import img from './img.png'
 
@@ -63,23 +65,25 @@ function App() {
 
               const kcal = Array( howManyTimesShouldDwarfEatThis.reduce( (acc,i)=> acc + i ) ).fill(0)
               const weight = Array( howManyTimesShouldDwarfEatThis.reduce( (acc,i)=> acc + i ) ).fill(0)
-
+              const names = Array( weight.length ).fill('')
 
               let t = 0;
               for ( let i =0; i < kcal.length; i++ ) {
                   kcal[i] = r[t].kcal
                   weight[i] = r[t].weight
+                  names[i] = r[t].name
                   if ( i === howManyTimesShouldDwarfEatThis[t] -1  && t+1 < r.length) {
                       t++;
                       howManyTimesShouldDwarfEatThis[t] += howManyTimesShouldDwarfEatThis[t-1]
                   }
               }
+
               const total = kcal.reduce( (acc,i) => acc+i  )
               let totalCost = weight.reduce( (acc, i)=> acc+i )
 
               // ===========================< DEBUG >============================
               console.log(r)
-              // console.log(howManyTimesShouldDwarfEatThis)
+              console.log(howManyTimesShouldDwarfEatThis)
               // console.log(kcal, weight)
               // console.log(total, maxW_Dwarf)
               // console.log("totalCost", totalCost)
@@ -90,10 +94,10 @@ function App() {
               totalCost -= res.value;
               console.log(totalCost)
 
+              getSecondDay( weight, kcal , res.arr, res.value, maxW_Dwarf, names )
 
               // Setting Values
               let tmp = Array(numberOfDays).fill(0)
-              // console.log(tmp)
               setFoodList([...tmp])
 
           } catch (e) {

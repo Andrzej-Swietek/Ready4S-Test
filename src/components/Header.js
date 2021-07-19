@@ -24,6 +24,7 @@ const Header = () => {
                     </clipPath>
                 </defs>
             </svg>
+            <blockquote> XX </blockquote>
         </header>
     );
 };
