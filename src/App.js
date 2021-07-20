@@ -4,6 +4,7 @@ import { useState } from "react";
 // MODULES
 import knapsack from "./modules/knapsack";
 import sortByKey from "./modules/sortBy";
+import getSecondDay from "./modules/getSecondDay";
 
 // DATA
 import meals from './data/dishes.json'
@@ -14,14 +15,10 @@ import Search from "./components/Search";
 import Day from './components/Day'
 import Theme from "./components/Theme";
 import Header from "./components/Header";
-import getSecondDay from "./modules/getSecondDay";
-
-// import img from './img.png'
-
+import Footer from "./components/Footer";
 
 function App() {
   const [foodList, setFoodList] = useState([])
-
 
     const getFoodSchedule = (maxW, r) => {
         const howManyTimesShouldOneEatThis = r.map( meal=> Math.floor( ( maxW-1) / meal.kcal  ) +1 );
@@ -41,7 +38,7 @@ function App() {
             }
         }
 
-        const total = kcal.reduce( (acc,i) => acc+i  );
+        const total = kcal.reduce( (acc,i) => acc+i  ); // minimalna ilosc danego dania aby zaspokoić cały głód
         let totalCost = weight.reduce( (acc, i)=> acc+i );
 
         const res = knapsack(kcal, weight,total-maxW);
@@ -52,10 +49,25 @@ function App() {
         return complete_food_schedule;
     }
     const includesMeal = (arr, meal) => arr.filter( a=> a.name === meal.name ).length > 0
+    const pushIfNotIncludesAndTrackAmount = (arrs, item) =>{
+        if (! includesMeal( arrs.day1,{name: item, amount: 0} ))
+            arrs.day1.push( {name: item, amount: 0} );
 
+        if (! includesMeal( arrs.day2,{name: item, amount: 0} ))
+            arrs.day2.push( {name: item, amount: 0} );
 
+        arrs.day1[ arrs.day1.findIndex( i => i.name === item ) ].amount += 1
+        arrs.day2[ arrs.day2.findIndex( i => i.name === item ) ].amount += 1
+    }
+    const mergeFoodLists = (what, toWhat) => {
+        for (let i = 0; i < what.length ; i++) {
+            let item = what[i];
+            if ( toWhat.filter( i => i.name === item.name).length === 0 ) { toWhat.push({name: item.name, amount: 0}); }
+            toWhat[ toWhat.findIndex( n => n.name === item.name ) ].amount += item.amount ;
+        }
+    }
     /**
-     *
+     * Sets state to list of days in which each day has a list of dishes for a givens day.
      * @param numberOfDays: number
      */
   const prepareFoodForUnexpectedJourney = ( numberOfDays ) => {
@@ -90,43 +102,18 @@ function App() {
               let maxW_Dwarf = 2900 - r[r.findIndex( i=> i.name === "Balin's Spiced Beef" )].kcal;
               let maxW_Hobbit = 2700 - r[r.findIndex( i=> i.name === "Soft-boiled egg" )].kcal - r[r.findIndex( i=> i.name === "Mrs. Cotton's Berry Pie" )].kcal;
               let maxW_Wizard = 3100 - r[r.findIndex( i=> i.name === "Scrambled eggs" )].kcal;
-              console.log(`%c || maxW_Dwarf: ${ maxW_Dwarf } | maxW_Hobbit: ${ maxW_Hobbit } | maxW_Wizard ${ maxW_Wizard } ||`, 'color: purple')
+              // console.log(`%c || maxW_Dwarf: ${ maxW_Dwarf } | maxW_Hobbit: ${ maxW_Hobbit } | maxW_Wizard ${ maxW_Wizard } ||`, 'color: purple')
 
               const dwarfCompleteFoodList = getFoodSchedule(maxW_Dwarf, r);
               const hobbitCompleteFoodList = getFoodSchedule(maxW_Hobbit, r);
               const wizardCompleteFoodList = getFoodSchedule(maxW_Wizard, r);
 
 
-              if (! includesMeal( dwarfCompleteFoodList.day1,{name: "Balin's Spiced Beef", amount: 0} ))
-                  dwarfCompleteFoodList.day1.push( {name: "Balin's Spiced Beef", amount: 0} );
-              if (! includesMeal( dwarfCompleteFoodList.day2,{name: "Balin's Spiced Beef", amount: 0} ))
-                  dwarfCompleteFoodList.day2.push( {name: "Balin's Spiced Beef", amount: 0} );
+              pushIfNotIncludesAndTrackAmount( dwarfCompleteFoodList, "Balin's Spiced Beef" );
+              pushIfNotIncludesAndTrackAmount( wizardCompleteFoodList, "Scrambled eggs" );
+              pushIfNotIncludesAndTrackAmount( hobbitCompleteFoodList, "Soft-boiled egg" );
+              pushIfNotIncludesAndTrackAmount( hobbitCompleteFoodList, "Mrs. Cotton's Berry Pie" );
 
-              if (! includesMeal( wizardCompleteFoodList.day1,{name: "Scrambled eggs", amount: 0} ))
-                  wizardCompleteFoodList.day1.push( {name: "Scrambled eggs", amount: 0} );
-              if (! includesMeal( wizardCompleteFoodList.day2,{name: "Scrambled eggs", amount: 0} ))
-                  wizardCompleteFoodList.day2.push( {name: "Scrambled eggs", amount: 0} );
-
-              if (! includesMeal( hobbitCompleteFoodList.day1,{name: "Soft-boiled egg", amount: 0} ))
-                  hobbitCompleteFoodList.day1.push( {name: "Soft-boiled egg", amount: 0} );
-              if (! includesMeal( hobbitCompleteFoodList.day2,{name: "Soft-boiled egg", amount: 0} ))
-                  hobbitCompleteFoodList.day2.push( {name: "Soft-boiled egg", amount: 0} );
-
-              if (! includesMeal( hobbitCompleteFoodList.day1,{name: "Mrs. Cotton's Berry Pie", amount: 0} ))
-                  hobbitCompleteFoodList.day1.push( {name: "Mrs. Cotton's Berry Pie", amount: 0} );
-              if (! includesMeal( hobbitCompleteFoodList.day2,{name:"Mrs. Cotton's Berry Pie" , amount: 0} ))
-                  hobbitCompleteFoodList.day2.push( {name: "Mrs. Cotton's Berry Pie", amount: 0} );
-
-              dwarfCompleteFoodList.day1[ dwarfCompleteFoodList.day1.findIndex( i => i.name === "Balin's Spiced Beef" ) ].amount += 1
-              dwarfCompleteFoodList.day2[ dwarfCompleteFoodList.day2.findIndex( i => i.name === "Balin's Spiced Beef" ) ].amount += 1
-
-              wizardCompleteFoodList.day1[ wizardCompleteFoodList.day1.findIndex( i => i.name === "Scrambled eggs" ) ].amount += 1
-              wizardCompleteFoodList.day2[ wizardCompleteFoodList.day2.findIndex( i => i.name === "Scrambled eggs" ) ].amount += 1
-
-              hobbitCompleteFoodList.day1[ hobbitCompleteFoodList.day1.findIndex( i => i.name === "Soft-boiled egg" ) ].amount += 1
-              hobbitCompleteFoodList.day2[ hobbitCompleteFoodList.day2.findIndex( i => i.name === "Soft-boiled egg" ) ].amount += 1
-              hobbitCompleteFoodList.day1[ hobbitCompleteFoodList.day1.findIndex( i => i.name === "Mrs. Cotton's Berry Pie" ) ].amount += 1
-              hobbitCompleteFoodList.day2[ hobbitCompleteFoodList.day2.findIndex( i => i.name === "Mrs. Cotton's Berry Pie" ) ].amount += 1
 
               // 13 Dwarves
               for (let i = 0; i < dwarfCompleteFoodList.day1.length ; i++) { dwarfCompleteFoodList.day1[i].amount *= 13; }
@@ -135,46 +122,18 @@ function App() {
               const mergedDay1 = []
               const mergedDay2 = []
 
-              for (let i = 0; i < dwarfCompleteFoodList.day1.length ; i++) {
-                  let item = dwarfCompleteFoodList.day1[i];                  console.log("d1", item);
-                  if ( mergedDay1.filter( i => i.name === item.name).length === 0 ) { mergedDay1.push({name: item.name, amount: 0}); }
-                  mergedDay1[ mergedDay1.findIndex( n => n.name === item.name ) ].amount += item.amount ;
-              }
-              for (let i = 0; i < hobbitCompleteFoodList.day1.length ; i++) {
-                  let item = hobbitCompleteFoodList.day1[i];
-                  if ( mergedDay1.filter( i => i.name === item.name).length === 0 ) { mergedDay1.push({name: item.name, amount: 0}); }
-                  mergedDay1[ mergedDay1.findIndex( n => n.name === item.name ) ].amount += item.amount ;
-              }
-              for (let i = 0; i < wizardCompleteFoodList.day1.length ; i++) {
-                  let item = wizardCompleteFoodList.day1[i];
-                  if ( mergedDay1.filter( i => i.name === item.name).length === 0 ) { mergedDay1.push({name: item.name, amount: 0}); }
-                  mergedDay1[ mergedDay1.findIndex( n => n.name === item.name ) ].amount += item.amount ;
-              }
+              mergeFoodLists(dwarfCompleteFoodList.day1, mergedDay1);
+              mergeFoodLists(hobbitCompleteFoodList.day1, mergedDay1);
+              mergeFoodLists(wizardCompleteFoodList.day1, mergedDay1);
 
-
-              for (let i = 0; i < dwarfCompleteFoodList.day2.length ; i++) {
-                  let item = dwarfCompleteFoodList.day2[i];
-                  console.log("d2", item)
-                  if ( mergedDay2.filter( i => i.name === item.name).length === 0 ) { mergedDay2.push({name: item.name, amount: 0}); }
-                  mergedDay2[ mergedDay2.findIndex( n => n.name === item.name ) ].amount += item.amount ;
-              }
-              for (let i = 0; i < hobbitCompleteFoodList.day2.length ; i++) {
-                  let item = hobbitCompleteFoodList.day2[i];
-                  if ( mergedDay2.filter( i => i.name === item.name).length === 0 ) { mergedDay2.push({name: item.name, amount: 0}); }
-                  mergedDay2[ mergedDay2.findIndex( n => n.name === item.name ) ].amount += item.amount ;
-              }
-              for (let i = 0; i < wizardCompleteFoodList.day2.length ; i++) {
-                  let item = wizardCompleteFoodList.day2[i];
-                  if ( mergedDay2.filter( i => i.name === item.name).length === 0 ) { mergedDay2.push({name: item.name, amount: 0}); }
-                  mergedDay2[ mergedDay2.findIndex( n => n.name === item.name ) ].amount += item.amount ;
-              }
-
+              mergeFoodLists(dwarfCompleteFoodList.day2, mergedDay2);
+              mergeFoodLists(hobbitCompleteFoodList.day2, mergedDay2);
+              mergeFoodLists(wizardCompleteFoodList.day2, mergedDay2);
 
               const totalListOfFood = [];
               for (let i = 0; i < numberOfDays; i++) {
                   totalListOfFood.push( (i%2 === 0)? mergedDay1:mergedDay2 )
               }
-              console.log(totalListOfFood)
 
               // Setting Values
               setFoodList([...totalListOfFood])
@@ -187,7 +146,6 @@ function App() {
     }
   return (
     <div className="App">
-        {/*<img src={img} alt="img"/>*/}
         <Header />
         <Search onChange={ prepareFoodForUnexpectedJourney } />
         <div className='days'>
@@ -196,7 +154,7 @@ function App() {
             }
         </div>
         <Theme />
-
+        <Footer />
     </div>
   );
 }
