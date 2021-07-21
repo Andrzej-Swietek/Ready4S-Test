@@ -1,0 +1,52 @@
+[
+  {
+    "id": 0,
+    "name": "Egg",
+    "weight": 0.05
+  },
+  {
+    "id": 1,
+    "name": "Slice of Lembas Bread",
+    "weight": 0.1
+  },
+  {
+    "id": 2,
+    "name": "Onion",
+    "weight": 0.15
+  },
+  {
+    "id": 3,
+    "name": "Cheese",
+    "weight": 0.25
+  },
+  {
+    "id": 4,
+    "name": "Beef",
+    "weight": 0.5
+  },
+  {
+    "id": 5,
+    "name": "Apple",
+    "weight": 0.2
+  },
+  {
+    "id": 6,
+    "name": "Blueberries",
+    "weight": 0.3
+  },
+  {
+    "id": 7,
+    "name": "Flour",
+    "weight": 0.35
+  },
+  {
+    "id": 8,
+    "name": "Butter",
+    "weight": 0.4
+  },
+  {
+    "id": 9,
+    "name": "Porridge oats",
+    "weight": 0.6
+  }
+]
