@@ -1,3 +1,13 @@
+/**
+ * 
+ * @param F : Array<meal> - Array with meal objects
+ * @param W - knapsack Weights of Products
+ * @param P - knapsack Products
+ * @param i - size of F - 1
+ * @param w - max weight
+ * @param response : Array<Number> - response referense
+ * @returns 
+ */
 const getSolution = ( F, W, P, i, w, response) => {
     if ( i === 0 ){
         if ( w >= W[0] ) { response.push(0); return; }

@@ -1,3 +1,11 @@
+/**
+ * Function to sort array by given key
+ * @param  array : Array<any> array/list to be sorted
+ * @param  key - key by which we sort
+ * @param  inverse - inverse sort
+ * @todo @param  secondaryKey - secondary key
+ * @returns sorted array
+ */
 export default function sortByKey(array, key, inverse=false, secondaryKey="") {
     return array.sort(function(a, b) {
         let x = a[key];

@@ -20,6 +20,12 @@ import Footer from "./components/Footer";
 function App() {
   const [foodList, setFoodList] = useState([])
 
+    /**
+     * Function that calculates food schedule for one person - The one that calls knapsack
+     * @param maxW : Number - The max. kcal the person (dwarf/wizard/hobbit) can eat
+     * @param r : Array<meals> - array already sorted by key: "ratio"
+     * @returns 
+     */
     const getFoodSchedule = (maxW, r) => {
         const howManyTimesShouldOneEatThis = r.map( meal=> Math.floor( ( maxW-1) / meal.kcal  ) +1 );
 
@@ -48,7 +54,20 @@ function App() {
 
         return complete_food_schedule;
     }
+
+    /**
+     * Function that checks if array of meals contains object with the given meal
+     * @param arr : Array<meal> - Array in which we check 
+     * @param meal : Object - Meal we check if is included
+     * @returns True/False
+     */
     const includesMeal = (arr, meal) => arr.filter( a=> a.name === meal.name ).length > 0
+
+    /**
+     * Function that keeps track of amout of given items(meals) in array and pushes item object to array if one is not included already
+     * @param arrs : Object - Object with 2 arrays: day1 and day2 that include objects of meals for the day
+     * @param item : String - Name of meal
+     */
     const pushIfNotIncludesAndTrackAmount = (arrs, item) =>{
         if (! includesMeal( arrs.day1,{name: item, amount: 0} ))
             arrs.day1.push( {name: item, amount: 0} );
@@ -59,6 +78,12 @@ function App() {
         arrs.day1[ arrs.day1.findIndex( i => i.name === item ) ].amount += 1
         arrs.day2[ arrs.day2.findIndex( i => i.name === item ) ].amount += 1
     }
+
+    /**
+     * Function that merges Food arrays into one give for a specific day
+     * @param what : Array<any> - The array that we want to merge
+     * @param toWhat : Array<any> - The array we want to merge to
+     */
     const mergeFoodLists = (what, toWhat) => {
         for (let i = 0; i < what.length ; i++) {
             let item = what[i];
@@ -66,6 +91,7 @@ function App() {
             toWhat[ toWhat.findIndex( n => n.name === item.name ) ].amount += item.amount ;
         }
     }
+
     /**
      * Sets state to list of days in which each day has a list of dishes for a givens day.
      * @param numberOfDays: number
@@ -102,7 +128,6 @@ function App() {
               let maxW_Dwarf = 2900 - r[r.findIndex( i=> i.name === "Balin's Spiced Beef" )].kcal;
               let maxW_Hobbit = 2700 - r[r.findIndex( i=> i.name === "Soft-boiled egg" )].kcal - r[r.findIndex( i=> i.name === "Mrs. Cotton's Berry Pie" )].kcal;
               let maxW_Wizard = 3100 - r[r.findIndex( i=> i.name === "Scrambled eggs" )].kcal;
-              // console.log(`%c || maxW_Dwarf: ${ maxW_Dwarf } | maxW_Hobbit: ${ maxW_Hobbit } | maxW_Wizard ${ maxW_Wizard } ||`, 'color: purple')
 
               const dwarfCompleteFoodList = getFoodSchedule(maxW_Dwarf, r);
               const hobbitCompleteFoodList = getFoodSchedule(maxW_Hobbit, r);

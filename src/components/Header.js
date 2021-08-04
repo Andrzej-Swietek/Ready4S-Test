@@ -1,6 +1,6 @@
 import React from 'react';
 import '../styles/Header.scss'
-// import img from '../assets/img.svg'
+
 const Header = () => {
     return (
         <header className='header'>

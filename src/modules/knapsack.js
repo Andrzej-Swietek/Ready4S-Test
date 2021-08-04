@@ -21,7 +21,6 @@ const knapsack = ( W, P, maxW ) =>{
 
     for ( let i = W[0]; i < maxW+1; i++ ) F[0][i] = P[0];
 
-    // console.log(F)
 
     for ( let i = 1; i <n ;i++ )
     {
